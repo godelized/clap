@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+main() {
+	# 1. Execute the prelude.
+	source clap.sh
+
+	# 2. Configure CLAP_* variables.
+	CLAP_cfg[name]='clap_snippet'
+	CLAP_flags_def[-h]=''
+	CLAP_flags_def_alt[--help]=-h
+	CLAP_positionals_def=(words...)
+
+	# 3. Parse.
+	clap_parse "$@"
+
+	# 4. Flags and positional parameters are available via:
+	#    - CLAP_flags: associative array.
+	#    - CLAP_positionals: array.
+	if [ $# == 0 ] || [ -n "${CLAP_flags[-h]+x}" ]; then
+		clap_show_usage
+		exit
+	fi
+
+	for word in "${CLAP_positionals[@]}"; do
+		echo "$word"
+	done
+}
+
+main "$@"
